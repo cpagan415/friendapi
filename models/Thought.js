@@ -7,7 +7,8 @@ const Thought = new Schema({
     },
     createdAt:
     {
-
+        type: Date,
+        default: Date.now
     },
     username:
     {
