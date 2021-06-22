@@ -1,7 +1,8 @@
 const {Schema, model, Types} = require('mongoose');
 
 //reaction schema
-const reactionSchema = ({
+const reactionSchema = new Schema(
+    {
     reactionId:
     {
         type:Schema.Types.ObjectId,
@@ -25,24 +26,42 @@ const reactionSchema = ({
         //need to format a timestamp for the getter get: createdAtVal => doteFormat(createdAtVal)
     }
 
-})
+});
 
-const thoughtSchema = ({
+const thoughtSchema = new Schema (
+    {
     username:
     {
-        type: String
+        type: String,
+        required: true
     },
     thoughtText: 
     {
-        type:String
+        type:String,
+        required: true,
+        minlength: 1,
+        maxlength: 280
     },
     createdAt:
     {
         type: Date,
         default: Date.now
+        //wants a getter to format the date 
     },
     reactions: [reactionSchema]
-})
+},
+{
+    toJSON: {
+        virtuals: true
+    },
+    id: false
+}
+);
+
+//virtual needs to be created for reaction count 
+thoughtSchema.virtual('reactionCount').get(function() {
+    return this.reactions.length;
+});
 
 const Thought = model('Thought', thoughtSchema);
 
