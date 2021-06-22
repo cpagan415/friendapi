@@ -9,9 +9,15 @@ const userSchema = new Schema({
     {
         type: String
     },
-    thoughts: [],
-    friends:[]
+    thoughts:[
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Thought'
+        }
+    ]
 })
 
+
 const User = model('User', userSchema);
-module.exports = {User};
+
+module.exports =  User;

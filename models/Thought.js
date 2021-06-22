@@ -1,7 +1,38 @@
-const {Schema, model} = require('mongoose');
+const {Schema, model, Types} = require('mongoose');
 
-const Thought = new Schema({
-    thoughtText:
+//reaction schema
+const reactionSchema = ({
+    reactionId:
+    {
+        type:Schema.Types.ObjectId,
+        default: () => new Types.ObjectId()
+    },
+    reactionBody:
+    {
+        type: String,
+        required: true,
+        maxlength: 280
+    },
+    username:
+    {
+        type: String,
+        required: true
+    },
+    createdAt:
+    {
+        type: Date,
+        default: Date.now
+        //need to format a timestamp for the getter get: createdAtVal => doteFormat(createdAtVal)
+    }
+
+})
+
+const thoughtSchema = ({
+    username:
+    {
+        type: String
+    },
+    thoughtText: 
     {
         type:String
     },
@@ -10,9 +41,9 @@ const Thought = new Schema({
         type: Date,
         default: Date.now
     },
-    username:
-    {
-        type: String
-    },
-    reactions: []
+    reactions: [reactionSchema]
 })
+
+const Thought = model('Thought', thoughtSchema);
+
+module.exports = Thought;
