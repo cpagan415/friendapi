@@ -6,11 +6,6 @@ const userController = {
     getUsers(req,res)
     {
         User.find({})
-        .populate({
-            path: 'thoughts',
-            select: '-__v'
-        })
-        .select('-__v')
         .then(userList => res.json(userList))
         .catch(error => {
             res.status(400).json(error);
@@ -81,9 +76,9 @@ const userController = {
     //need to figure out how to add friend to list 
     addFriend({params} ,res)
     {
-        User.findByIdandUpdate(
+        User.findOneAndUpdate(
             {_id: params.userId},
-            {$push: {friends: params.userId}},
+            {$push: {friends:  params.friendId}},
             {new: true}
         )
         .then(userInfo => {
@@ -91,7 +86,7 @@ const userController = {
             {
                 return res.status(404).json({message: 'User does not exist with this id'});
             }
-            res.json(userInfo);       
+            res.json({userInfo, message: 'New friend added.'});       
          })
          .catch(err => res.json(err));
     }
