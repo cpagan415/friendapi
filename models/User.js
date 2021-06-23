@@ -27,11 +27,17 @@ const userSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'Thought'
         }
-    ]
-    //friends:[this] --> is this enough for friends? will do the friend count last 
+    ],
+    friends:[{
+        type: Schema.Types.ObjectId,
+        ref: this
+    }] 
 })
 
-  
+//virtual for friend count 
+userSchema.virtual('friendCount').get(function() {
+    return this.friends.length;
+});
 
 const User = model('User', userSchema);
 

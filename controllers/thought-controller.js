@@ -5,6 +5,11 @@ const thoughtController ={
     getThoughts(req, res)
     {
         Thought.find({})
+        .populate({
+            path: 'username',
+            select: '-__v'
+        })
+        .select('-__v')
         .then(thoughtDb => {
             res.json(thoughtDb)
         })
@@ -56,11 +61,12 @@ const thoughtController ={
        .then(deletedThought => {
            if(!deletedThought)
            {
-               return res.status(404).json({message: 'Thought with this is was not found in the system'});
+               res.status(404).json({message: 'Thought with this id was not found in the system'})
+               return;
            }
            return User.findOneAndUpdate(
                {_id: params.userId},
-               {$pull: {comments: params.thoughtId}},
+               {$pull: {thoughts: params.thoughtId}},
                {new: true}
                )
        })
@@ -86,7 +92,7 @@ const thoughtController ={
         .then(thoughtDb => {
             if(!thoughtDb)
             {
-                res.status(400).json({message: 'Thought not found under this id'})
+                res.status(404).json({message: 'Thought not found under this id'})
                 return;
             }
             res.json(thoughtDb)

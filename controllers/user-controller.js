@@ -1,10 +1,16 @@
-const User  = require('../models/User')
+const { User, Thought } = require('../models/index');
+
 
 //get User List
 const userController = {
     getUsers(req,res)
     {
         User.find({})
+        .populate({
+            path: 'thoughts',
+            select: '-__v'
+        })
+        .select('-__v')
         .then(userList => res.json(userList))
         .catch(error => {
             res.status(400).json(error);
@@ -57,18 +63,37 @@ const userController = {
     //delete user
     userDelete({params}, res)
     {
-        User.findOneAndDelete({_id: params.id})
+        User.findByIdAndRemove({_id: params.id})
         .then(userInfo => {
             if(!userInfo)
             {
-                res.status(404).json({ message: 'User now found in the system.'})
+                res.status(404).json({ message: 'User not found with this id.'})
                 return;
             }
-            res.json({userInfo, message: 'User successfully deleted.'});
+            //I need to figure out how to delete all thoughts assoc. with the user upon deletion of the user
         })
+        .then(userInfo => res.json({userInfo, message: 'User and user thoughts deleted'}))
         .catch(error => {
             res.status(400).json(error);
         })
+    },
+
+    //need to figure out how to add friend to list 
+    addFriend({params} ,res)
+    {
+        User.findByIdandUpdate(
+            {_id: params.userId},
+            {$push: {friends: params.userId}},
+            {new: true}
+        )
+        .then(userInfo => {
+            if(!userInfo)
+            {
+                return res.status(404).json({message: 'User does not exist with this id'});
+            }
+            res.json(userInfo);       
+         })
+         .catch(err => res.json(err));
     }
 };
 
