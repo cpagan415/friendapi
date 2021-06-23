@@ -29,6 +29,13 @@ const userSchema = new Schema({
         }
     ],
     friends:[this] 
+},
+{
+    toJSON:
+    {
+        virtuals: true
+    },
+    id: false
 })
 
 //virtual for friend count 

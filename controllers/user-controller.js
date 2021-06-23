@@ -89,6 +89,26 @@ const userController = {
             res.json({userInfo, message: 'New friend added.'});       
          })
          .catch(err => res.json(err));
+    },
+
+    //delete friend 
+    deleteFriend({params}, res)
+    {
+        User.findOneAndUpdate(
+           {_id: params.userId},
+           {$pull: {friends: params.friendId}},
+           {new: true}
+        )
+        .then(userFriend => {
+            if(!userFriend)
+            {
+                res.status(404).json({message: 'User friend with that id not listed'})
+                return;
+            }
+            res.json({userFriend, message: 'Friend successfully deleted from user'})
+        })
+        .catch(err => res.json(err));
+
     }
 };
 
