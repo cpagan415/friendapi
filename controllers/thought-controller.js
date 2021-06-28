@@ -5,11 +5,6 @@ const thoughtController ={
     getThoughts(req, res)
     {
         Thought.find({})
-        .populate({
-            path: 'username',
-            select: '-__v'
-        })
-        .select('-__v')
         .then(thoughtDb => {
             res.json(thoughtDb)
         })

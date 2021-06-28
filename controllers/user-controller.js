@@ -58,19 +58,21 @@ const userController = {
     //delete user
     userDelete({params}, res)
     {
-        User.findByIdAndRemove({_id: params.id})
-        .then(userInfo => {
-            if(!userInfo)
+        User.findByIdAndRemove(
+            {_id: params.userId}
+            )
+        .then(deletedUser => {
+            if(!deletedUser)
             {
-                res.status(404).json({ message: 'User not found with this id.'})
-                return;
+                return res.status(404).json({message: 'User does not exist with that id'});
             }
-            //I need to figure out how to delete all thoughts assoc. with the user upon deletion of the user
+            return Thought.findByIdAndDelete(
+                {_id: params.userId},{_id: params.thoughtId}, {new: true})
+        }) 
+        .then(delDb => {
+            res.json({delDb, message: 'User and thoughts successfully deleted'})
         })
-        .then(userInfo => res.json({userInfo, message: 'User and user thoughts deleted'}))
-        .catch(error => {
-            res.status(400).json(error);
-        })
+        .catch(err => res.json(err));
     },
 
     //need to figure out how to add friend to list 
