@@ -22,8 +22,8 @@ const reactionSchema = new Schema(
     createdAt:
     {
         type: Date,
-        default: Date.now
-        //need to format a timestamp for the getter get: createdAtVal => doteFormat(createdAtVal)
+        default: Date.now,
+        //still need getter for date format 
     }
 
 });

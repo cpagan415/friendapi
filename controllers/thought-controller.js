@@ -33,6 +33,20 @@ const thoughtController ={
         .catch(err => {res.status(400).json(err)})
     },
 
+    //update thought by id
+        updateThought({params, body}, res)
+        {
+            Thought.findOneAndUpdate({_id: params.id}, body, {new: true, runValidators: true})
+            .then(thoughtInfo => {
+                if(!thoughtInfo)
+                {
+                    res.status(404).json({message: 'No thought found with this id'})
+                    return;
+                }
+                res.json({message: 'Thought updated successfully!'})
+            })
+            .catch(err => res.status(400).json(err));
+        },
     //get thought by id
     getThoughtById({params}, res){
         Thought.findOne({_id: params.id})
@@ -99,10 +113,10 @@ const thoughtController ={
     deleteReaction({params}, res){
         Thought.findOneAndUpdate(
             {_id: params.thoughtId},
-            {$pull: {reactions: {reactionId: params.reactionId}}},
+            {$remove: {reactions: params.reactionId}},
             {new : true}
         )
-        .then(delReaction => res.json(delReaction))
+        .then(() => res.json({message: 'Reaction successfully deleted'}))
         .catch(err => res.json(err))
     }
 }
