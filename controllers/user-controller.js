@@ -58,25 +58,21 @@ const userController = {
     //delete user
     deleteUser({ params }, res) {
 
-        User.find({}, 'thoughts')
-        .then(delThought => {
-               Thought.findByIdandRemove(() =>{
-                   delThought.map(thoughts => res.json(thoughts.thoughts))
-                })
-        })
-        /*
-        return User.findOneAndDelete({ _id: params.id })
-          .then(delUser => {
-            if (!delUser) {
-              res.status(404).json({ message: 'User not found with this id.' });
-              return;
-            }
-            res.json({delUser, message: 'User deleted.'})
-          })*/
-          .catch(err => res.status(400).json(err));
+          User.findOneAndDelete({_id: params.id})
+          .then(userInfo => {
+              if(!userInfo)
+              {
+                  return res.status(404).json({message: 'User does not exist!'});
+              }
+              return Thought.deleteMany({username: userInfo.username})
+              .then(() =>{
+                  res.json({message: 'User and thoughts successfully deleted'});
+              })
+          })
+          .catch(err=> res.status(400).json(err));
       },
 
-    //need to figure out how to add friend to list 
+    
     addFriend({params} ,res)
     {
         User.findOneAndUpdate(
